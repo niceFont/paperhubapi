@@ -1,23 +1,27 @@
 defmodule PaperhubapiWeb.Router do
   use PaperhubapiWeb, :router
 
-  pipeline :api do
+  pipeline :api_pub do
     plug :cors
     plug :accepts, ["json"]
-    #plug CORSPlug, [origin: "http://localhost:8000"]
-    #plug :authenticate
   end
 
-  pipeline :upload do
+  pipeline :api_priv do
+    plug :cors
+    plug :authorize
+    plug :accepts, ["json"]
+  end
+
+  pipeline :image_priv do
     plug :cors
     plug :authorize
     plug :accepts, ["jpeg", "png"]
-    #plug :check_size
-    #temp upload
-    #check file content using api
-    #upload to s3
-    #save data to database
-    #return signed url
+  end
+
+
+  pipeline :image_pub do
+    plug :cors
+    plug :accepts, ["jpeg", "png"]
   end
 
   def authorize(conn, _opts) do
@@ -49,7 +53,7 @@ defmodule PaperhubapiWeb.Router do
   end
 
   scope "/api/user", PaperhubapiWeb do
-    pipe_through :api
+    pipe_through :api_pub
 
     post "/register", UserController, :register
     options "/register", UserController, :options
@@ -57,23 +61,41 @@ defmodule PaperhubapiWeb.Router do
     options "/login", UserController, :options
   end
 
+
   scope "/api/images", PaperhubapiWeb do
-    pipe_through :upload
+    pipe_through :image_pub
 
     get "/:page", ImageController, :get_all
     options "/:page", ImageController, :options
-    post "/", ImageController, :upload
-    options "/", ImageController, :options
   end
 
-  scope "/api/me", PaperhubapiWeb do
-    pipe_through :api
 
-    get "/session", UserController, :session
-    delete "/session", UserController, :logout
+  scope "/api/me", PaperhubapiWeb do
+    pipe_through :api_pub
+
+    options "/images/:page", ImageController, :options
+    options "/images", ImageController, :options
     options "/session", UserController, :options
   end
 
+  # PRIVATE ENDPOINTS
+
+  scope "/api/images", PaperhubapiWeb do
+    pipe_through :image_priv
+
+    post "/", ImageController, :upload
+    options "/", ImageController, :options
+    get "/:page/:user", ImageController, :get
+    options "/:page/:user", ImageController, :options
+  end
+  scope "/api/me", PaperhubapiWeb do
+    pipe_through :api_priv
+
+    get "/session", UserController, :session
+    delete "/session", UserController, :logout
+    get "/images/:page", ImageController, :get
+    delete "/images", ImageController, :delete
+  end
   # Other scopes may use custom stacks.
   # scope "/api", PaperhubapiWeb do
   #   pipe_through :api

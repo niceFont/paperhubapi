@@ -4,8 +4,8 @@ defmodule Paperhubapi.Image do
 
   schema "images" do
     field :url, :string
-    field :user_id, :integer
-
+    belongs_to :user, Paperhubapi.User
+    belongs_to :category, Paperhubapi.Category
     timestamps()
   end
 

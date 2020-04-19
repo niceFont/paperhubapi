@@ -6,6 +6,7 @@ defmodule Paperhubapi.User do
     field :email, :string
     field :password, :string
     field :username, :string
+    has_many :images, Paperhubapi.Image
     timestamps()
   end
 

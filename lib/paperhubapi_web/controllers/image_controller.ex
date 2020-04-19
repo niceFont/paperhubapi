@@ -62,7 +62,39 @@ defmodule PaperhubapiWeb.ImageController do
     conn |> json(%{images: images})
   end
 
-  def option(conn, _params) do
+  def get(conn, %{"page" => page}) do
+    userID = conn |> fetch_session() |> get_session(:uid)
+
+    images = Repo.all(from i in "images",
+              where: i.user_id == ^userID,
+              limit: 25,
+              offset: 25 * ^page,
+              select: %{id: i.id, url: i.url})
+
+    conn |> json(%{images: images})
+  end
+  def get(conn, %{"page" => page, "user" => user}) do
+    userID = Repo.all(from u in "users",
+                      where: u.username == ^user,
+                      select: u.id)
+    images = Repo.all(from i in "images",
+                      where: i.user_id == ^userID,
+                      limit: 25,
+                      offset: 25 * ^page,
+                      select: %{id: i.id,url: i.url})
+
+    conn |> json(%{images: images})
+  end
+
+  def delete(conn, %{"image" => imageID}) do
+    image = Repo.get!(Image, imageID)
+    case Repo.delete image do
+      {:ok, _} -> conn |> send_resp(204, "")
+      {:error, _} -> conn |> send_resp(500, "")
+    end
+  end
+
+  def options(conn, _params) do
    conn
    |> send_resp(204, "")
   end

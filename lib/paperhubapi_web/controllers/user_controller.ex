@@ -15,10 +15,10 @@ defmodule PaperhubapiWeb.UserController do
   def session(conn, _params) do
     uid = conn |> fetch_session() |> get_session("uid")
     if(uid) do
-      user = Repo.all(from u in "users",
+      [{username, email}] = Repo.all(from u in "users",
       where: u.id == ^uid,
-      select: [u.username, u.email])
-      conn |> json(user)
+      select: {u.username, u.email})
+      conn |> json(%{username: username, email: email})
     else
       conn |> send_resp(403, "")
     end
