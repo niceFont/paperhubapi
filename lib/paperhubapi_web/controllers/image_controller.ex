@@ -33,22 +33,29 @@ defmodule PaperhubapiWeb.ImageController do
     end
   end
 
-  def save_to_db(conn, url) do
+  def save_to_db(conn, url, %{"type" => type, "width" => width, "height" => height, "category" => category}) do
     uid = conn |> fetch_session() |> get_session(:uid)
-    case Repo.insert(%Image{url: url, user_id: uid}) do
+    {height, _} = Integer.parse(height)
+    {width, _} = Integer.parse(width)
+    {category, _} = Integer.parse(category)
+    case Repo.insert(%Image{url: url, user_id: uid, type: type, height: height, width: width, category_id: category}) do
       {:ok, _} -> {:ok}
-      {:error, _} -> {:error, "Error while inserting Image"}
+      {:error, message} ->
+        IO.puts message
+        {:error, "Error while inserting Image"}
     end
   end
 
   def upload(conn, params) do
     with {:ok, _, conn} <- check_size(conn),
           {:ok, url} <- upload_to_s3(params),
-          {:ok} <- save_to_db(conn, url)
+          {:ok} <- save_to_db(conn, url, params)
     do
       conn |> json(%{"url" => url})
     else
-      {:error, _} -> conn |> send_resp(500, "Error while uploading Image.")
+      {:error, message} ->
+        IO.puts message
+        conn |> send_resp(500, "Error while uploading Image.")
       {:user_error, message} -> conn |> send_resp(400, message)
     end
   end

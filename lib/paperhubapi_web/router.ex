@@ -52,6 +52,13 @@ defmodule PaperhubapiWeb.Router do
     end)
   end
 
+  scope "/api", PaperhubapiWeb do
+    pipe_through :api_pub
+
+    get "/categories", CategoryController, :get_all
+    options "/categories", CategoryController, :options
+  end
+
   scope "/api/user", PaperhubapiWeb do
     pipe_through :api_pub
 
