@@ -4,9 +4,9 @@ files:
   - source: /
     destination: /paperhubapi
 hooks:
-  BeforeInstall:
+  AfterInstall:
     - location: scripts/install_dependencies.sh
-      timeout: 300
+      timeout: 900
       runas: root
   ApplicationStart:
     - location: scripts/start_server.sh

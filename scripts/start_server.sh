@@ -1,8 +1,9 @@
 #!/bin/bash
 
-echo $(pwd)
+ELIXIR_DIR="/paperhubapi"
 
-cd ..
+echo $(pwd)
+cd $ELIXIR_DIR
 killall -2 beam.smp
 sleep 1
 
