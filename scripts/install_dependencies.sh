@@ -1,6 +1,6 @@
 #!/bin/bash
 
-ELIXIR_DIR="/home/paperhubapi"
+ELIXIR_DIR="/paperhubapi"
 
 cd $ELIXIR_DIR
 
