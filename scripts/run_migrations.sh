@@ -1,1 +1,2 @@
-mix ecto.migrate > logs.txt 2>&1 migration_errors.txt
+#!/bin/bash
+mix ecto.migrate
