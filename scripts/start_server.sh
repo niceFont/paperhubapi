@@ -1,5 +1,8 @@
 #!/bin/bash
 
+echo $(pwd)
+
+cd ..
 killall -2 beam.smp
 sleep 1
 
