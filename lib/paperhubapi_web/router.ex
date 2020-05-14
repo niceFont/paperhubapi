@@ -44,7 +44,7 @@ defmodule PaperhubapiWeb.Router do
   def cors(conn, _opts) do
     conn |> register_before_send(fn conn ->
      conn
-      |> put_resp_header("Access-Control-Allow-Origin", "http://localhost:8080")
+      |> put_resp_header("Access-Control-Allow-Origin", System.get_env("UI_DOMAIN", "http://localhost:8080"))
       |> put_resp_header("Access-Control-Allow-Methods", "POST, GET, DELETE, OPTIONS")
       |> put_resp_header("Access-Control-Allow-Headers", "X-PINGOTHER,Content-Type,api-key,Authorization,Accept,Origin,User-Agent,DNT,Cache-Control,X-Mx-ReqToken,Keep-Alive,X-Requested-With,If-Modified-Since,X-CSRF-Token")
       |> put_resp_header("Access-Control-Allow-Credentials", "true")
