@@ -2,7 +2,6 @@
 
 ELIXIR_DIR="/paperhubapi"
 cd $ELIXIR_DIR
-. ./.env
-mix phx.server /dev/null 2> /dev/null < /dev/null &
+elixir --erl "-detached" -S mix phx.server
 
 exit
