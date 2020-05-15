@@ -1,10 +1,7 @@
 #!/bin/bash
 
 ELIXIR_DIR="/paperhubapi"
-
-killall -2 beam.smp
-sleep 1
-
+cd $ELIXIR_DIR
 . ./.env
 mix phx.server &
 
